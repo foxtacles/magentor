@@ -13,6 +13,7 @@ module Magento
         define_method(:net_http) do |host, port, proxy_host, proxy_port|
           n = Net::HTTP.new host, port, proxy_host, proxy_port
           n.verify_mode = OpenSSL::SSL::VERIFY_NONE
+          n
         end
       end
 
