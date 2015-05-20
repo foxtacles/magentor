@@ -9,7 +9,14 @@ module Magento
     end
 
     def client
-      @client ||= XMLRPC::Client.new3(host: config[:host], path: config[:path], port: config[:port], use_ssl: config[:port] == "443")
+      c = Class.new(XMLRPC::Client) do
+        define_method(:net_http) do |host, port, proxy_host, proxy_port|
+          n = Net::HTTP.new host, port, proxy_host, proxy_port
+          n.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        end
+      end
+
+      @client ||= c.new3(host: config[:host], path: config[:path], port: config[:port], use_ssl: config[:port] == "443")
     end
 
     def connect
